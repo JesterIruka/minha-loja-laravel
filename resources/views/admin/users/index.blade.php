@@ -52,7 +52,7 @@
     <div class="modal fade" id="criar">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form action="{{route('admin.products.store')}}" method="post">
+                <form action="{{route('admin.users.store')}}" method="post">
                     @csrf
                     <div class="modal-header text-center">
                         <h1>Criar Usuário</h1>

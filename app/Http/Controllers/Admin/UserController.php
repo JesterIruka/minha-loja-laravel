@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UserRequest;
 use App\User;
 use Illuminate\Http\Request;
 
@@ -23,8 +24,14 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
-        User::create($request->all());
-        flash('Usuário criado com sucesso!')->success();
+        if (User::where('email', $request->post('email'))->exists()) {
+            flash('Já existe um usuário com este e-mail')->error();
+        } else {
+            $data = $request->all();
+            $data['password'] = bcrypt($data['password']);
+            User::create($data);
+            flash('Usuário criado com sucesso!')->success();
+        }
         return redirect()->route('admin.users.index');
     }
 
@@ -36,10 +43,20 @@ class UserController extends Controller
         return view('admin.users.edit', compact('user'));
     }
 
-    public function update(Request $request, $id)
+    public function update(UserRequest $request, $id)
     {
+        $data = $request->all();
+        if (empty($data['password'])) unset($data['password']);
+        else $data['password'] = bcrypt($data['password']);
+
         $user = User::find($id);
-        $user->update($request->all());
+
+        if ((strtolower($data['email']) != strtolower($user->email)) and User::where('email', $data['email'])->exists()) {
+            flash('Já existe um usuário com este e-mail')->error();
+            return redirect()->route('admin.users.edit', ['user'=>$id]);
+        }
+
+        $user->update($data);
         flash('Usuário atualizado com sucesso!')->success();
         return redirect()->route('admin.users.index');
     }

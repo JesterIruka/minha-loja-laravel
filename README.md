@@ -13,3 +13,10 @@ Para criar um usuário e testar basta rodar o comando
 php artisan db:seed
 ```
 Isto criará um usuário `root@domain.com` com a senha `123` e cargo Administrador 
+
+### Features pendentes
+
+- Mostrar todas as fotos de um produto ao invés de somente a primeira
+- Criar função de apenas alterar o estoque de uma variação
+- Fazer com que funcionários apenas consigam alterar o estoque
+- Implementar PagSeguro
