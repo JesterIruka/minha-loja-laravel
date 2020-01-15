@@ -20,3 +20,4 @@ Isto criará um usuário `root@domain.com` com a senha `123` e cargo Administrad
 - Criar função de apenas alterar o estoque de uma variação
 - Fazer com que funcionários apenas consigam alterar o estoque
 - Implementar PagSeguro
+- Implementar PAC/SEDEX/JADLOG/FRETE FIXO
