@@ -75,6 +75,7 @@
                             <td>R$ {{number_format($var->price, 2, ',', '.')}}</td>
                             <td>{{number_format($var->stock, 1, ',', '.')}}</td>
                             <td>
+                                <button type="button" class="btn btn-primary btn-sm" onclick="setCurrentlyEdit({{$var->id}})">Editar</button>
                                 <button type="button" class="btn btn-danger btn-sm" onclick="destroyVariation({{$var->id}})">Excluir</button>
                             </td>
                         </tr>
@@ -110,9 +111,47 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="editar">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1>Editar variação</h1>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Nome</label>
+                        <input type="text" name="name" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Preço</label>
+                        <input type="text" name="price" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Estoque</label>
+                        <input type="text" name="stock" class="form-control">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button onclick="processModal(true)" class="btn btn-primary">Salvar</button>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 @section('script')
     <script type="text/javascript">
+
+        let currentlyEdit = 0;
+
+        function setCurrentlyEdit(id) {
+            currentlyEdit = id;
+            let tds = $('#var-'+id).find('td');
+            let modal = $('#editar');
+            modal.find('input[name=name]').val(tds.eq(0).html());
+            modal.find('input[name=price]').val(tds.eq(1).html().substr(3));
+            modal.find('input[name=stock]').val(tds.eq(2).html());
+            modal.modal('show');
+        }
 
         function removeImage(id) {
             $.post('/admin/products/image/'+id+'/destroy').done((res)=> {
@@ -129,12 +168,16 @@
 
         $('input[name=price]').mask('000.000.000.000.000,00', {reverse: true});
 
-        function processModal() {
-            let modal = $('.modal');
+        function processModal(edit=false) {
+            let modal = edit ? $('#editar') : $('#criar');
+            let id = currentlyEdit;
             let name = modal.find('input[name=name]').val();
             let price = modal.find('input[name=price]').val().replace('.', '').replace(',', '.');
             let stock = modal.find('input[name=stock]').val();
-            addVariation({product_id:{{$product->id}},name,price,stock});
+
+            if (edit) alterVariation({id,name,price,stock});
+            else addVariation({product_id:{{$product->id}},name,price,stock});
+
             modal.modal('hide');
         }
 
@@ -153,10 +196,28 @@
                 '<td>'+data.name+'</td>'+
                 '<td>'+price.toLocaleString('pt-BR', {style:'currency',currency:'BRL'})+'</td>'+
                 '<td>'+stock+'</td>'+
-                '<td><button type="button" class="btn btn-danger btn-sm" onclick="destroyVariation('+res.id+')">Excluir</button></td></tr>';
+                '<td>' +
+                    '<button type="button" class="btn btn-primary btn-sm" onclick="setCurrentlyEdit('+res.id+')">Editar</button>' +
+                    '<button type="button" class="btn btn-danger btn-sm" onclick="destroyVariation('+res.id+')">Excluir</button></td></tr>';
                 $('tbody').append(row);
             }).fail(function (e) {
                 alert(e);
+            });
+        }
+
+        function alterVariation({id, name, price, stock}) {
+            $.ajax({
+                url: '/admin/variations/'+id,
+                type: 'PUT',
+                data: {name,price,stock},
+                success: (res) => {
+                    if (res.success) {
+                        let tds = $('#var-'+id).find('td');
+                        tds.eq(0).html(name);
+                        tds.eq(1).html('R$ '+Number(price).toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2}));
+                        tds.eq(2).html(Number(stock).toLocaleString('pt-BR', {maximumFractionDigits: 1, minimumFractionDigits: 1}));
+                    }
+                }
             });
         }
     </script>

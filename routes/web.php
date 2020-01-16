@@ -46,6 +46,7 @@ Route::prefix('admin')->name('admin.')->namespace('Admin')->middleware('auth')->
 
     Route::post('variations/add', 'ProductController@addVar');
     Route::post('variations/{id}/destroy', 'ProductController@destroyVar');
+    Route::put('variations/{id}', 'ProductController@alterVar');
     Route::post('products/image/{id}/destroy', 'ProductController@destroyImage');
 });
 

@@ -95,6 +95,15 @@ class ProductController extends Controller
         return ['destroyed'=>true];
     }
 
+    public function alterVar(Request $request, $id)
+    {
+        $var = ProductVariation::find($id);
+
+        if ($var) $var->update($request->all());
+        else return ['success'=>false];
+        return ['success'=>true];
+    }
+
     public function destroyImage($id)
     {
         $image = ProductImage::findOrFail($id);

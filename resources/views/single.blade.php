@@ -5,7 +5,16 @@
         <div class="col-lg-4 offset-lg-1">
             <div class="h-100">
                 @if ($product->images->count())
-                    <img src="{{asset('storage/'.$product->images[0]->path)}}" class="img-fluid" alt="">
+                    <img id="image" src="{{asset('storage/'.$product->images[0]->path)}}" class="img-fluid" alt="">
+                    <div class="row">
+                        @foreach ($product->images as $image)
+                            <div class="col-2">
+                                <a href="#">
+                                    <img src="{{asset('storage/'.$image->path)}}" class="img-fluid" alt="" onclick="display(this)">
+                                </a>
+                            </div>
+                        @endforeach
+                    </div>
                 @else
                     <img src="{{asset('assets/img/no-photo.jpg')}}" class="img-fluid" alt="">
                 @endif
@@ -48,6 +57,10 @@
 @endsection
 @section('script')
     <script type="text/javascript">
+        function display(element) {
+            document.getElementById('image').src = element.src;
+        }
+
         $('input[name=amount],select[name=id]').change(function (e) {
             let field = $(this);
             while (!field.hasClass('form-group')) field=field.parent();
