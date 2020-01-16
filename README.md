@@ -21,5 +21,5 @@ Isto criará um usuário `root@domain.com` com a senha `123` e cargo Administrad
 
 ### Features concluídas
 
-- Mostrar todas as fotos de um produto ao invés de somente a primeira
-- Criar função de apenas alterar o estoque de uma variação
+- Mostrar todas as fotos de um produto ao invés de somente a primeira e possuir uma navegação para selecionar a imagem em maior escala.
+- Criar função de alterar uma variação (nome, preço, estoque)
