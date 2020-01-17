@@ -16,10 +16,12 @@ Isto criará um usuário `root@domain.com` com a senha `123` e cargo Administrad
 
 ### Features pendentes
 
+- Checar o rastreamento da encomenda para alterar o status da venda
 - Fazer com que funcionários apenas consigam alterar o estoque
+- Calcular frete **PAC/SEDEX/JADLOG** e **Frete Fixo** configurável
 - Implementar PagSeguro
 
 ### Features concluídas
 
-- Mostrar todas as fotos de um produto ao invés de somente a primeira
-- Criar função de apenas alterar o estoque de uma variação
+- Mostrar todas as fotos de um produto ao invés de somente a primeira e possuir uma navegação para selecionar a imagem em maior escala.
+- Criar função de alterar uma variação (nome, preço, estoque)

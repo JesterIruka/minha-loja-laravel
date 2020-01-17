@@ -46,7 +46,7 @@
         </div>
         <div class="row">
             @foreach ($product->images as $img)
-                <div class="col-md-2">
+                <div class="col-6 col-md-3 col-lg-2">
                     <img src="{{asset('storage/'.$img->path)}}" class="img-fluid img-thumbnail" id="img-{{$img->id}}">
                     <button type="button" class="btn btn-danger btn-sm btn-block" onclick="removeImage({{$img->id}})">Remover</button>
                 </div>
@@ -173,7 +173,7 @@
             let id = currentlyEdit;
             let name = modal.find('input[name=name]').val();
             let price = modal.find('input[name=price]').val().replace('.', '').replace(',', '.');
-            let stock = modal.find('input[name=stock]').val();
+            let stock = modal.find('input[name=stock]').val().replace('.', '').replace(',', '.');
 
             if (edit) alterVariation({id,name,price,stock});
             else addVariation({product_id:{{$product->id}},name,price,stock});
@@ -206,6 +206,7 @@
         }
 
         function alterVariation({id, name, price, stock}) {
+            console.log(JSON.stringify({name,price,stock}));
             $.ajax({
                 url: '/admin/variations/'+id,
                 type: 'PUT',
