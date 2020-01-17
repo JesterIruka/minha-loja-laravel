@@ -16,6 +16,7 @@ Isto criará um usuário `root@domain.com` com a senha `123` e cargo Administrad
 
 ### Features pendentes
 
+- Checar o rastreamento da encomenda para alterar o status da venda
 - Fazer com que funcionários apenas consigam alterar o estoque
 - Calcular frete **PAC/SEDEX/JADLOG** e **Frete Fixo** configurável
 - Implementar PagSeguro
