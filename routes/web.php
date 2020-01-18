@@ -52,4 +52,5 @@ Route::prefix('admin')->name('admin.')->namespace('Admin')->middleware('auth')->
 
 Route::prefix('ipn')->namespace('IPN')->group(function () {
     Route::any('mercadopago', 'MercadoPago@rest');
+    Route::any('pagseguro', 'PagSeguro@rest');
 });

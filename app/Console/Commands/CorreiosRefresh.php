@@ -44,7 +44,7 @@ class CorreiosRefresh extends Command
         $sales = Sale::where('status', Sale::DESPACHADO)->select('id', 'shipping_code')->get();
         foreach ($sales as $sale) {
             if (preg_match('/[A-Z]{2}\d{9}[A-Z]{2}/', $sale->shipping_code)) { //Correios
-                $res = $this->rastrear($sale->shipping_code);
+                $res = $this->track($sale->shipping_code);
                 if (strpos($res, 'Objeto entregue ao destinat') !== false) {
                     $sale->update(['status'=>Sale::ENTREGUE]);
                 }
@@ -52,8 +52,8 @@ class CorreiosRefresh extends Command
         }
     }
 
-    public function rastrear($objeto)
+    public function track($code)
     {
-        return file_get_contents("https://linketrack.com/$objeto/html");
+        return file_get_contents("https://www.websro.com.br/correios.php?P_COD_UNI=$code");
     }
 }

@@ -10,30 +10,16 @@ use MercadoPago\SDK;
 trait MercadoPagoTrait
 {
 
-    private $config;
-
-    public function __construct()
-    {
-        $this->config = (object)config('payments.mercadopago');
-    }
-
-    public function MP_isEnabled()
-    {
-        return $this->config->enabled;
-    }
+    private $mercadopago;
 
     public function MP_initialize()
     {
-        SDK::setClientId($this->config->CLIENT_ID);
-        SDK::setClientSecret($this->config->CLIENT_SECRET);
+        $this->mercadopago = (object)config('payments.mercadopago');
+        SDK::setClientId($this->mercadopago->CLIENT_ID);
+        SDK::setClientSecret($this->mercadopago->CLIENT_SECRET);
     }
 
-    /**
-     * @param $sale
-     * @return bool|string
-     * @throws \Exception
-     */
-    public function MP_criarPreferencia($sale, $carrier, $carrier_cost)
+    public function MP_createPreference($sale, $carrier_cost)
     {
         $products = $sale->products;
 
@@ -41,15 +27,15 @@ trait MercadoPagoTrait
 
         $preference->items = $this->cartToArray($products);
         $preference->payer = (object) ['name'=>$sale->client_name, 'email'=>$sale->client_email];
-        $preference->notification_url = $this->config->notification_url;
+        $preference->notification_url = $this->mercadopago->notification_url;
         $preference->external_reference = $sale->id;
         $preference->shipments = (object)['mode'=>'not_specified', 'cost'=>$carrier_cost];
-        $preference->back_urls = [
-            "success" => "https://www.seu-site/success",
-            "failure" => "http://www.seu-site/failure",
-            "pending" => "http://www.seu-site/pending"
-        ];
-        $preference->auto_return = 'approved';
+//        $preference->back_urls = [
+//            "success" => "https://www.seu-site/success",
+//            "failure" => "http://www.seu-site/failure",
+//            "pending" => "http://www.seu-site/pending"
+//        ];
+//        $preference->auto_return = 'approved'; TODO
 
         try {
             $preference->save();

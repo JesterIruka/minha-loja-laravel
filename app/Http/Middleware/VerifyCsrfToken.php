@@ -20,6 +20,7 @@ class VerifyCsrfToken extends Middleware
      */
     protected $except = [
         'admin/variations/*',
-        'admin/products/image/*'
+        'admin/products/image/*',
+        'ipn/*'
     ];
 }

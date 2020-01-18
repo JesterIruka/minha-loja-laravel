@@ -190,9 +190,14 @@
                     <h1>Método de pagamento</h1>
                     <div class="row">
                         <input id="gateway" type="hidden" name="gateway">
-                        @if (config('payments.mercadopago')['enabled'])
+                        @if (config('payments.mercadopago.enabled'))
                             <div class="col-md-3">
                                 <button type="button" onclick="checkout('mercadopago')" class="btn btn-primary">MercadoPago</button>
+                            </div>
+                        @endif
+                        @if (config('payments.pagseguro.enabled'))
+                            <div class="col-md-3">
+                                <button type="button" onclick="checkout('pagseguro')" class="btn btn-success">PagSeguro</button>
                             </div>
                         @endif
                         <!-- INSERIR OUTROS MÉTODOS DE PAGAMENTO -->

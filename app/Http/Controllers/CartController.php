@@ -7,12 +7,14 @@ use App\Product;
 use App\ProductVariation;
 use App\Sale;
 use App\Traits\MercadoPagoTrait;
+use App\Traits\PagSeguroTrait;
 use Illuminate\Http\Request;
 
 class CartController extends Controller
 {
 
     use MercadoPagoTrait;
+    use PagSeguroTrait;
 
     public function index()
     {
@@ -86,15 +88,20 @@ class CartController extends Controller
             $var->update(['stock'=>$var->stock-$amount]);
         }
 
+        $res = $this->getPreferenceLink($sale, $carrierName, $carrier);
+        if ($res) return redirect($res);
+        flash('Ocorreu um erro durante a sua compra, por favor entre em contato.');
+        return redirect()->route('cart.index');
+    }
+
+    private function getPreferenceLink($sale, $carrierName, $carrierCost) {
         if ($sale->gateway == 'mercadopago') {
             $this->MP_initialize();
-            $res = $this->MP_criarPreferencia($sale, $carrierName, $carrier);
-            if ($res) return redirect($res);
-            else {
-                flash('Ocorreu um erro durante a sua compra, por favor entre em contato.');
-                return redirect()->route('cart.index');
-            }
-        }
+            return $this->MP_createPreference($sale, $carrierCost);
+        } else if ($sale->gateway == 'pagseguro') {
+            $this->PS_initialize();
+            return $this->PS_createPayment($sale, $carrierCost);
+        } return false;
     }
 
     private function getTotal($cart)

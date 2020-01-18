@@ -100,9 +100,7 @@
       <path value="$PROJECT_DIR$/vendor/doctrine/collections" />
       <path value="$PROJECT_DIR$/vendor/mercadopago/dx-php" />
       <path value="$PROJECT_DIR$/vendor/total-voice/php-client" />
-      <path value="$PROJECT_DIR$/vendor/cagartner/correios-consulta" />
-      <path value="$PROJECT_DIR$/vendor/cagartner/phpquery" />
-      <path value="$PROJECT_DIR$/vendor/sabberworm/php-css-parser" />
+      <path value="$PROJECT_DIR$/vendor/pagseguro/pagseguro-php-sdk" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="7.2" />
