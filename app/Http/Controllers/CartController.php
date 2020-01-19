@@ -9,6 +9,7 @@ use App\Sale;
 use App\Traits\MercadoPagoTrait;
 use App\Traits\PagSeguroTrait;
 use Illuminate\Http\Request;
+use PagSeguro\Resources\Responsibility\Http\Methods\Success;
 
 class CartController extends Controller
 {
@@ -73,7 +74,7 @@ class CartController extends Controller
         $carrier = $this->shippingMethods()[$carrierName = $data['carrier']];
         $end = (object) $data['endereco'];
         $data['client_address'] = $end->estado.', '.$end->cidade.', '.$end->cep.', '.$end->logradouro.', '.$end->numero.', compl: '.
-            $end->complemento.', bairro: '.$end->bairro;
+            str_replace(',', '.', $end->complemento).', bairro: '.$end->bairro;
         unset($data['endereco']);
         $data['status'] = Sale::PENDENTE;
         $data['total'] = $this->getTotal($cart)+$carrier;

@@ -25,7 +25,7 @@ trait MercadoPagoTrait
 
         $preference = new Preference();
 
-        $preference->items = $this->cartToArray($products);
+        $preference->items = $this->MP_cartToArray($products);
         $preference->payer = (object) ['name'=>$sale->client_name, 'email'=>$sale->client_email];
         $preference->notification_url = $this->mercadopago->notification_url;
         $preference->external_reference = $sale->id;
@@ -46,7 +46,7 @@ trait MercadoPagoTrait
         }
     }
 
-    private function cartToArray($products)
+    private function MP_cartToArray($products)
     {
         return array_map(function ($p) {
             return (object)['id'=>$p['id'],'title'=>$p['name'],'quantity'=>$p['amount'],'unit_price'=>floatval($p['price']),'currency_id'=>'BRL'];

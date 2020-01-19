@@ -39,6 +39,9 @@ trait PagSeguroTrait
 
     public function PS_createPayment($sale, $carrier_cost)
     {
+        $endereco = array_map(function ($el) {
+            trim($el);
+            }, explode(',', $sale->client_address));
         $products = $sale->products;
 
         $payment = new Payment();
@@ -47,17 +50,18 @@ trait PagSeguroTrait
         $payment->setNotificationUrl($this->pagseguro->notification_url);
 
         $payment->setSender()->setName($sale->client_name)->setEmail($sale->client_email);
-        $payment->setItems($this->cartToArray($products));
+
+        foreach ($products as $p)
+            $payment->addItems()->withParameters($p->id, $p->name, $p->amount, $p->price);
 
         $shipping = $payment->setShipping();
-        $shipping->getType()->setType(3);
-        $shipping->getCost()->setCost($carrier_cost);
-        $shipping->setAddressRequired()->withParameters(false);
-
+        $shipping->setType()->withParameters(3);
+        $shipping->setCost()->withParameters($carrier_cost);
 
         try {
             return $payment->register($this->PS_credentials());
         } catch (\Exception $e) {
+            error_log($e->getMessage());
             error_log($e->getTraceAsString());
             return false;
         }
@@ -67,14 +71,14 @@ trait PagSeguroTrait
      * @param SaleProduct[] $products
      * @return array
      */
-    private function cartToArray($products)
+    private function PS_cartToArray($products)
     {
         return array_map(function ($p) {
             return (object)[
-                'id'=>$p->id,
-                'description'=>$p->name,
-                'amount'=>$p->price,
-                'quantity'=>$p->amount,
+                'id'=>$p['id'],
+                'description'=>$p['name'],
+                'amount'=>$p['price'],
+                'quantity'=>$p['amount'],
                 'weight'=>50 //TODO
             ];
         }, $products->toArray());
