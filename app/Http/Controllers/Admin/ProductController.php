@@ -86,7 +86,7 @@ class ProductController extends Controller
     public function addVar(Request $request)
     {
         $var = ProductVariation::create($request->all());
-        return ['id'=>$var->id, 'price'=>'R$ '.number_format($var->price, 2, ',', '.')];
+        return ['id'=>$var->id];
     }
 
     public function destroyVar($id)

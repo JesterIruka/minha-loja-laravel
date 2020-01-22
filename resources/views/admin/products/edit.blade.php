@@ -69,17 +69,15 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($product->variations as $var)
-                        <tr id="var-{{$var->id}}">
-                            <td>{{$var->name}}</td>
-                            <td>R$ {{number_format($var->price, 2, ',', '.')}}</td>
-                            <td>{{number_format($var->stock, 1, ',', '.')}}</td>
-                            <td>
-                                <button type="button" class="btn btn-primary btn-sm" onclick="setCurrentlyEdit({{$var->id}})">Editar</button>
-                                <button type="button" class="btn btn-danger btn-sm" onclick="destroyVariation({{$var->id}})">Excluir</button>
-                            </td>
-                        </tr>
-                    @endforeach
+                    <tr v-for="v in variations" id="var-@{{v.id}}">
+                        <td>@{{v.name}}</td>
+                        <td>R$ @{{Number(v.price).toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}}</td>
+                        <td>@{{parseInt(v.stock)}}</td>
+                        <td>
+                            <button type="button" class="btn btn-primary btn-sm" @click="setCurrentlyEdit(v.id)">Editar</button>
+                            <button type="button" class="btn btn-danger btn-sm" @click="destroyVariation(v.id)">Excluir</button>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -139,17 +137,29 @@
     </div>
 @endsection
 @section('script')
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.0"></script>
     <script type="text/javascript">
+
+        const vue = new Vue({
+            el: 'tbody',
+            data: {
+                variations: {!! json_encode($product->variations) !!}
+            },
+            methods: {
+                destroyVariation,
+                setCurrentlyEdit
+            }
+        });
 
         let currentlyEdit = 0;
 
         function setCurrentlyEdit(id) {
             currentlyEdit = id;
-            let tds = $('#var-'+id).find('td');
+            let v = vue.variations.find((v) => v.id==id);
             let modal = $('#editar');
-            modal.find('input[name=name]').val(tds.eq(0).html());
-            modal.find('input[name=price]').val(tds.eq(1).html().substr(3));
-            modal.find('input[name=stock]').val(tds.eq(2).html());
+            modal.find('input[name=name]').val(v.name);
+            modal.find('input[name=price]').val(Number(v.price).toLocaleString('pt-BR', {maximumFractionDigits: 2, minimumFractionDigits: 2}));
+            modal.find('input[name=stock]').val(parseInt(v.stock));
             modal.modal('show');
         }
 
@@ -183,40 +193,30 @@
 
         function destroyVariation(id) {
             $.post('/admin/variations/'+id+'/destroy').done(function (e) {
-                $('#var-'+id).remove();
+                vue.variations = vue.variations.filter((v) => v.id != id);
             }).fail(function (e) {
                console.log(e);
             });
         }
         function addVariation(data) {
             $.post('/admin/variations/add', data).done(function (res) {
-                let price = Number(data.price);
-                let stock = Number(data.stock).toLocaleString('pt-BR', {minimumFractionDigits:1});
-                let row = '<tr id="var-'+res.id+'">'+
-                '<td>'+data.name+'</td>'+
-                '<td>'+price.toLocaleString('pt-BR', {style:'currency',currency:'BRL'})+'</td>'+
-                '<td>'+stock+'</td>'+
-                '<td>' +
-                    '<button type="button" class="btn btn-primary btn-sm" onclick="setCurrentlyEdit('+res.id+')">Editar</button>' +
-                    '<button type="button" class="btn btn-danger btn-sm" onclick="destroyVariation('+res.id+')">Excluir</button></td></tr>';
-                $('tbody').append(row);
+                vue.variations.push({id:res.id, name:data.name, price:data.price, stock:data.stock});
             }).fail(function (e) {
                 alert(e);
             });
         }
 
         function alterVariation({id, name, price, stock}) {
-            console.log(JSON.stringify({name,price,stock}));
             $.ajax({
                 url: '/admin/variations/'+id,
                 type: 'PUT',
                 data: {name,price,stock},
                 success: (res) => {
                     if (res.success) {
-                        let tds = $('#var-'+id).find('td');
-                        tds.eq(0).html(name);
-                        tds.eq(1).html('R$ '+Number(price).toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2}));
-                        tds.eq(2).html(Number(stock).toLocaleString('pt-BR', {maximumFractionDigits: 1, minimumFractionDigits: 1}));
+                        vue.variations = vue.variations.map((v) => {
+                            if (v.id == id) return {id,name,price,stock};
+                            return v;
+                        });
                     }
                 }
             });
