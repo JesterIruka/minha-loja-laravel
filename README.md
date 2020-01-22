@@ -25,3 +25,4 @@ Isto criará um usuário `root@domain.com` com a senha `123` e cargo Administrad
 - Mostrar todas as fotos de um produto ao invés de somente a primeira e possuir uma navegação para selecionar a imagem em maior escala.
 - Criar função de alterar uma variação (nome, preço, estoque)
 - Implementar PagSeguro
+- SMS com Link para publicar avaliação

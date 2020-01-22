@@ -24,13 +24,13 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav text-right">
                     <li class="nav-item @if (request()->is('/')) active @endif">
-                        <a class="nav-link" href="/">Início <span class="sr-only">(Atual)</span></a>
+                        <a class="nav-link" href="{{route('index')}}">Início <span class="sr-only">(Atual)</span></a>
                     </li>
                     <li class="nav-item @if (request()->is('categories*')) active @endif">
-                        <a class="nav-link" href="/categories">Produtos</a>
+                        <a class="nav-link" href="{{route('categories')}}">Produtos</a>
                     </li>
                     <li class="nav-item @if (request()->is('ratings')) active @endif">
-                        <a class="nav-link" href="/ratings">Avaliações</a>
+                        <a class="nav-link" href="{{route('ratings.index')}}">Avaliações</a>
                     </li>
                 </ul>
                 <div class="text-right ml-auto">

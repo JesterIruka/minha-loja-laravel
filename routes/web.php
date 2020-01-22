@@ -17,7 +17,12 @@ Route::get('/', 'HomeController@index')->name('index');
 Route::get('/categories', 'HomeController@categories')->name('categories');
 Route::get('/categories/{category}', 'HomeController@products')->name('products');
 Route::get('/product/{id}', 'HomeController@single')->name('single');
-Route::get('/ratings', 'HomeController@ratings')->name('ratings');
+
+Route::prefix('/ratings')->name('ratings.')->group(function () {
+    Route::get('/', 'RatingController@index')->name('index');
+    Route::get('/create', 'RatingController@create')->name('create');
+    Route::post('/store', 'RatingController@store')->name('store');
+});
 
 Route::prefix('cart')->name('cart.')->group(function () {
     Route::get('/', 'CartController@index')->name('index');

@@ -2,7 +2,9 @@
 
 namespace App\Console\Commands;
 
+use App\RatingToken;
 use App\Sale;
+use App\Traits\TotalVoiceTrait;
 use Cagartner\CorreiosConsulta\CorreiosConsulta;
 use Cagartner\CorreiosConsulta\Facade;
 use Cagartner\CorreiosConsulta\ServiceProvider;
@@ -10,6 +12,9 @@ use Illuminate\Console\Command;
 
 class CorreiosRefresh extends Command
 {
+
+    use TotalVoiceTrait;
+
     /**
      * The name and signature of the console command.
      *
@@ -47,6 +52,12 @@ class CorreiosRefresh extends Command
                 $res = $this->track($sale->shipping_code);
                 if (strpos($res, 'Objeto entregue ao destinat') !== false) {
                     $sale->update(['status'=>Sale::ENTREGUE]);
+
+                    $rt = RatingToken::create(['token'=>hash('sha256', serialize($sale))]);
+
+                    $message = config('store.messages.sms.avaliacao');
+                    $message = str_replace('%s', $rt->token, $message);
+                    $this->enviarSMS($sale->client_phone, $message);
                 }
             }
         }
